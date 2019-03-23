@@ -121,7 +121,7 @@ procedure TForm1.Button1Click(Sender: TObject);
   {Расчет статистических величин: минимального, максимального и среднего значений целевой функции  }
   procedure statistics(popsize:integer; var max,avg,min,sumfitness:real; var pop:population); {Расчет статистик популяции }
   var j:integer;
-      xMin:real;
+      xMinS:real;
   begin
       {Инициализация }
       sumfitness := pop[1].fitness;
