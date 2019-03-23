@@ -111,7 +111,6 @@ procedure TForm1.Button1Click(Sender: TObject);
               f:=f*2;
           end;
           x[i]:=xmin[i]+(xmax[i]-xmin[i])*accum/(f-1);
-          //writeln('x= ',x[i]:10:8)
           Memo1.Text:= Memo1.Text + 'x= ' + FloatToStrF(x[i],ffFixed,15,6) + #13#10;
       end
   end;
@@ -138,10 +137,6 @@ procedure TForm1.Button1Click(Sender: TObject);
           end;        {Новое значение min}
       end;
 
-      //writeln('min= ',min:10:8);
-      //writeln('xMin= ',xMin:10:8);
-      //writeln('______________________________');
-      //writeln();
       Memo1.Text:= Memo1.Text + #13#10 + 'min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
       Memo1.Text:= Memo1.Text + 'xMin= ' + FloatToStrF(xMin,ffFixed,15,6) + #13#10;
 
@@ -157,7 +152,6 @@ procedure TForm1.Button1Click(Sender: TObject);
           for j1 := 1 to lchrom*dim do chrom[j1] := flip(0.5);        {Бросок монетки}
           decode(chrom,lchrom,x);        {Декодирование строки}
           fitness := objfunc(x);            {Вычисление начальных значений функции пригодности}
-         // writeln('fitness_initpop= ',fitness:10:8)
          Memo1.Text:= Memo1.Text + 'fitness_initpop= ' + FloatToStrF(fitness,ffFixed,15,6) + #13#10;
       end;
   end;
@@ -271,13 +265,11 @@ procedure TForm1.Button1Click(Sender: TObject);
           with newpop[j] do begin
               decode(chrom, lchrom,x);
               fitness := objfunc(x);
-             // writeln('fitness1= ',fitness:10:8)
               Memo1.Text:= Memo1.Text + 'fitness1= ' + FloatToStrF(fitness,ffFixed,15,6) + #13#10;
           end;
           with newpop[j+1] do begin
               decode(chrom, lchrom,x);
               fitness := objfunc(x);
-              //writeln('fitness2= ',fitness:10:8)
               Memo1.Text:= Memo1.Text + 'fitness2= ' + FloatToStrF(fitness,ffFixed,15,6) + #13#10;
           end;
           j := j + 2;
@@ -306,9 +298,8 @@ begin
         statistics(popsize, max, avg, min, sumfitness, newpop);
         oldpop:= newpop;  {переход на новое поколение }
     until (gen >= maxgen);
-    //writeln('global min= ',min:10:8);
-    Memo1.Text:= Memo1.Text + #13#10 + 'global min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
 
+    Memo1.Text:= Memo1.Text + #13#10 + 'global min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
 
 end;
 
