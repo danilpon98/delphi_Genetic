@@ -1,0 +1,107 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
+const
+    maxpop = 100;
+    maxstring = 30;
+    dim = 1; {размерность пространства поиска}
+
+type
+  allele = boolean;   { позиция в битовой строке}
+  chromosome = array[1..maxstring*dim] of allele;    {битовая строка}
+  fenotype = array[1..dim] of real;   {фенотип = массив вещественных координат точки в пространстве поиска}
+  individual = record
+    chrom:chromosome; {генотип = битовая строка}
+    x:fenotype; {фенотип = массив вещественных координат точки в пространстве поиска}
+    fitness:real; {значение целевой функции}
+  end;
+  population = array[1..maxpop] of individual;
+
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Memo1: TMemo;
+    procedure Button1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+const
+  xmax:fenotype=(7); {массив максимальных значений для координат точки в пространстве поиска}
+  xmin:fenotype=(0); {массив минимальных значений для координат точки в пространстве поиска}
+
+var
+  Form1: TForm1;
+  oldpop, newpop, intpop :population;     {Три непересекающихся популяции ? старая, новая и проме-жуточная}
+  popsize, lchrom, gen, maxgen :integer;  {Глобальные целые переменные}
+  pcross, pmutation, sumfitness :real;    {глобальные вещественные переменные}
+  nmutation, ncross :integer;             {Статистические целые}
+  avg, max, min :real;                    {Статистические вещественные}
+
+implementation
+
+{$R *.dfm}
+
+{================================================================================}
+
+{Вероятностные процедуры}
+function random_:real;
+begin
+    random_:=random(65535)/(65535-1);
+end;
+
+function flip(probability:real):boolean;    {подбрасывание монетки ? true если орел}
+begin
+    if probability=1.0 then flip:=true else flip:=(random_<=probability);
+end;
+
+{Случайный выбор между low и high}
+function rnd(low,high:integer):integer;
+var i:integer;
+begin
+    if low >= high then
+        i := low
+    else begin
+        i := trunc( random_ * (high-low+1) + low);
+        if i > high then i := high;
+    end;
+    rnd := i;
+end;
+
+{================================================================================}
+
+{интерфейсные процедуры: decode and objfunc}
+function objfunc(x:fenotype):real;
+begin
+    objfunc:= 5-24*x[1]+17*x[1]*x[1]-(11/3)*x[1]*x[1]*x[1]+(1/4)*x[1]*x[1]*x[1]*x[1];
+end;
+procedure decode(chrom:chromosome; lbits:integer; var x:fenotype);    {Декодирование строки в массив вещественных координат точки в пространстве поиска - true=1, false=0}
+var i,j:integer;
+    f, accum, powerof2:real;
+begin
+    for i:=1 to dim do begin
+        accum:=0.0; powerof2:=1; f:=1;
+        for j:=1+lbits*(i-1) to lbits+lbits*(i-1) do begin
+            if chrom[j] then accum := accum + powerof2;
+            powerof2 := powerof2 * 2;
+            f:=f*2;
+        end;
+        x[i]:=xmin[i]+(xmax[i]-xmin[i])*accum/(f-1);
+        writeln('x= ',x[i]:10:8)
+    end
+end;
+
+{================================================================================}
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+//
+end;
+
+end.
