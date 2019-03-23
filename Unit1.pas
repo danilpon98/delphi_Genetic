@@ -4,27 +4,31 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls;
 
 const
-    maxpop = 100;
-    maxstring = 30;
-    dim = 1; {размерность пространства поиска}
+    maxpop = 100;   {максимальный размер популяции}
+    maxstring = 20;
+    dim = 1;        {размерность пространства поиска}
 
 type
-  allele = boolean;   { позиция в битовой строке}
+  allele = boolean;                                  {позиция в битовой строке}
   chromosome = array[1..maxstring*dim] of allele;    {битовая строка}
-  fenotype = array[1..dim] of real;   {фенотип = массив вещественных координат точки в пространстве поиска}
+  fenotype = array[1..dim] of real;                  {фенотип = массив вещественных координат точки в пространстве поиска}
   individual = record
     chrom:chromosome; {генотип = битовая строка}
-    x:fenotype; {фенотип = массив вещественных координат точки в пространстве поиска}
-    fitness:real; {значение целевой функции}
+    x:fenotype;       {фенотип = массив вещественных координат точки в пространстве поиска}
+    fitness:real;     {значение целевой функции}
   end;
   population = array[1..maxpop] of individual;
 
   TForm1 = class(TForm)
     Button1: TButton;
     Memo1: TMemo;
+    ProgressBar1: TProgressBar;
+    Label1: TLabel;
+    UpDown1: TUpDown;
+    Edit1: TEdit;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -38,11 +42,23 @@ const
 
 var
   Form1: TForm1;
-  oldpop, newpop, intpop :population;     {Три непересекающихся популяции ? старая, новая и проме-жуточная}
-  popsize, lchrom, gen, maxgen :integer;  {Глобальные целые переменные}
-  pcross, pmutation, sumfitness :real;    {глобальные вещественные переменные}
-  nmutation, ncross :integer;             {Статистические целые}
-  avg, max, min :real;                    {Статистические вещественные}
+  oldpop, newpop, intpop :population;  {Три непересекающихся популяции: старая, новая и проме-жуточная}
+
+    popsize,    {размер популяции}
+    lchrom,     {число битов на один кодируемый параметр} {Пример, с 20 битами на параметр мы получаем область из 2^20 = 1048576 дискретных значений}
+    gen,        {счетчик поколений}
+    maxgen      {максимальное число поколений}
+  :integer;     {Глобальные целые переменные}
+
+    pcross,     {вероятность скрещивания}
+    pmutation,  {вероятность мутации}
+    sumfitness  {Накопление суммы значений функции пригодности для рассчета среднего}
+  :real;        {глобальные вещественные переменные}
+
+  nmutation,    {счетчик мутаций}
+  ncross        {счетчик скрещиваний}
+   :integer;    {Статистические целые}
+  avg, max, min :real;{Статистические вещественные}
 
 implementation
 
@@ -61,8 +77,8 @@ procedure TForm1.Button1Click(Sender: TObject);
       if probability=1.0 then flip:=true else flip:=(random_<=probability);
   end;
 
-  {Случайный выбор между low и high}
-  function rnd(low,high:integer):integer;
+
+  function rnd(low,high:integer):integer;   {Функция определение точки сечения в диапазоне между 1 и l-1 (Случайный выбор между low и high)}
   var i:integer;
   begin
       if low >= high then
@@ -77,7 +93,8 @@ procedure TForm1.Button1Click(Sender: TObject);
   {================================================================================}
 
   {интерфейсные процедуры: decode and objfunc}
-  function objfunc(x:fenotype):real;
+
+  function objfunc(x:fenotype):real;  { Функция }
   begin
       objfunc:= 5-24*x[1]+17*x[1]*x[1]-(11/3)*x[1]*x[1]*x[1]+(1/4)*x[1]*x[1]*x[1]*x[1];
   end;
@@ -102,7 +119,7 @@ procedure TForm1.Button1Click(Sender: TObject);
   {================================================================================}
 
 
-  {Расчет статистических величин: statistics }
+  {Расчет статистических величин: минимального, максимального и среднего значений целевой функции  }
   procedure statistics(popsize:integer; var max,avg,min,sumfitness:real; var pop:population); {Расчет статистик популяции }
   var j:integer;
       xMin:real;
@@ -128,7 +145,7 @@ procedure TForm1.Button1Click(Sender: TObject);
       Memo1.Text:= Memo1.Text + #13#10 + 'min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
       Memo1.Text:= Memo1.Text + 'xMin= ' + FloatToStrF(xMin,ffFixed,15,6) + #13#10;
 
-      avg := sumfitness/popsize;                    {Расчет среднего}
+      avg := sumfitness/popsize; {Расчет среднего}
   end;
 
   {Процедура инициализации initpop}
@@ -148,10 +165,10 @@ procedure TForm1.Button1Click(Sender: TObject);
   {================================================================================}
 
   {3 генетических оператора: отбора (select), скрещивания (crossover) и мутации (mutation)}
-  procedure select;        {процедура выбора}
+  procedure select; {процедура турнирного отбора}
   var ipick:integer;
 
-      procedure shuffle(var pop:population);    {процедура перемешивания популяции в процессе отбора}
+      procedure shuffle(var pop:population);    {процедура перемешивания популяции в процессе отбора.}
       var    i,j:integer;
           ind0:individual;
       begin
@@ -163,7 +180,7 @@ procedure TForm1.Button1Click(Sender: TObject);
           end;
       end;
 
-      function select_1:integer;
+      function select_1:integer;  {осуществляет отбор наилучших особей для популяции}
       var    j1,j2,m:integer;
       begin
           if (ipick>popsize) then begin
@@ -186,35 +203,49 @@ procedure TForm1.Button1Click(Sender: TObject);
       oldpop:=intpop;
   end;
   function mutation (alleleval:allele; pmutation:real; var nmutation:integer):allele;
-      {мутация одного бита в строке (аллеля) с вероятностью pmutation, count number of mutations}
+      {мутация одного бита в строке (аллеля) с вероятностью pmutation}
+      { alleleval – ген для мутации}
   var
       mutate:boolean;
   begin
-      mutate := flip(pmutation);
+      mutate := flip(pmutation);       { Мутация с вероятностью PMutation }
       if mutate then begin
-          nmutation := nmutation + 1;
-          mutation := not alleleval;
-      end else mutation := alleleval;
+          nmutation := nmutation + 1;  { Наращиваем счетчик мутаций }
+          mutation := not alleleval;   { Совершаем мутацию }
+      end else mutation := alleleval;  { Не делаем мутацию }
   end;
+
+  { Процедцра скрещивания 2 родительских строк, результат помещается в 2 строках-потомках}
+  { реализация одноточечного скрещивания}
   procedure crossover(var parent1, parent2, child1, child2:chromosome; flchrom:integer; var ncross, nmutation, jcross:integer; var pcross, pmutation:real);
-      {Скрещивание 2 родительских строк, результат помещается в 2 строках-потомках}
+    {parent1, parent2 – хромосомы родителей}
+    {child1,child2 – хромосомы потомков}
+    {flchrom – длина хромосомы (количество генов)}
+    {ncross, nmutation – счетчики количества скрещиваний и мутаций}
+    {jcross – точка сечения.}
   var
       j:integer;
   begin
-      if flip(pcross) then begin                {Выполняется скрещивание с вероятностью pcross}
-          jcross:=rnd(1,flchrom-1);            {Определение точки сечения в диапазоне между 1 и l-1}
-          ncross:=ncross + 1;                {Инкрементирование счетчика скрещиваний}
+      if flip(pcross) then begin      {Выполняется скрещивание с вероятностью pcross}
+          jcross:=rnd(1,flchrom-1);   {Определение точки сечения в диапазоне между 1 и l-1}
+          ncross:=ncross + 1;         {Инкрементирование счетчика скрещиваний}
       end else
           jcross:=flchrom;
-      {певая часть обмена , 1 to 1 and 2 to 2}
+      {певая часть обмена , 1 to 1 and 2 to 2}{ Обмениваем часть после точки сечения }
       for j := 1 to jcross do begin
+          { Заодно и мутируем с вероятностью pmutation }
+          { Первый потомок }
           child1[j]:=mutation(parent1[j], pmutation, nmutation);
+          { Второй потомок }
           child2[j]:=mutation(parent2[j], pmutation, nmutation);
       end;
       {вторая часть обмена, 1 to 2 and 2 to 1}
       if jcross<>flchrom then                {пропуск, если точка скрещивания равна flchrom--скрещивание не происходит}
           for j := jcross+1 to flchrom do begin
+              { Заодно и мутируем с вероятностью pmutation }
+              { Первый потомок }
               child1[j] := mutation(parent2[j], pmutation, nmutation);
+              { Второй потомок }
               child2[j] := mutation(parent1[j], pmutation, nmutation);
           end;
   end;
@@ -223,7 +254,7 @@ procedure TForm1.Button1Click(Sender: TObject);
 
   procedure generation;
   {Генерирование нового поколения при помощи отбора, скрещивания и мутации}
-  {Прим: предполагается, что популяция имеет четный размер}
+  {Прием: предполагается, что популяция имеет четный размер}
   var
       j, mate1, mate2, jcross:integer;
   begin
@@ -256,22 +287,24 @@ procedure TForm1.Button1Click(Sender: TObject);
 
 begin
     Memo1.Clear;
-    popsize:=6;                    {размер популяции}
-    lchrom:=20;                        {число битов на один кодируемый параметр}
-    maxgen:=18;                    {максимальное число поколений}
-    pmutation:=0.1;                {вероятность скрещивания}
-    pcross:=0.9;                    {вероятность мутации}
-    randomize;                        {Инициализация генератора случайных чисел}
-    nmutation := 0;    ncross := 0;    {Инициализация счетчиков}
+    popsize:=6;                     {размер популяции}
+    lchrom:=20;                     {число битов на один кодируемый параметр}
+    maxgen:=18;                     {максимальное число поколений}
+    pmutation:=0.1;                 {вероятность мутации}
+    pcross:=0.9;                    {вероятность скрещивания}
+    randomize;                      {Инициализация генератора случайных чисел}
+    nmutation := 0;    ncross := 0; {Инициализация счетчиков}
     initpop;
     statistics (popsize, max, avg, min, sumfitness, oldpop);
     gen:= 0;                        {Установка счетчика поколений в 0}
+    ProgressBar1.Max:= maxgen;
     repeat {Главный итерационный цикл}
         gen:= gen + 1;
+        ProgressBar1.Position := gen;
         Memo1.Text:= Memo1.Text + #13#10 + '______________________________Поколение № ' + FloatToStr(gen) + #13#10;
         generation;
         statistics(popsize, max, avg, min, sumfitness, newpop);
-        oldpop:= newpop;            {переход на новое поколение }
+        oldpop:= newpop;  {переход на новое поколение }
     until (gen >= maxgen);
     //writeln('global min= ',min:10:8);
     Memo1.Text:= Memo1.Text + #13#10 + 'global min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
