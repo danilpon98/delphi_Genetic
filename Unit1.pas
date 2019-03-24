@@ -43,6 +43,9 @@ type
     Chart1: TChart;
     Series1: TLineSeries;
     Series2: TPointSeries;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Label7: TLabel;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -301,6 +304,7 @@ procedure TForm1.Button1Click(Sender: TObject);
        Series1.AddXY(i[1],objfunc(i));
        i[1]:=i[1]+h;
     end;
+    Chart1.Update;
   end;
 
   procedure inputMemo(popsize:integer; var pop:population);  {вывод данных в Memo}
@@ -314,6 +318,24 @@ procedure TForm1.Button1Click(Sender: TObject);
     end;
     Memo1.Text:= Memo1.Text + #13#10 + 'min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
     Memo1.Text:= Memo1.Text + 'xMin= ' + FloatToStrF(xMinS,ffFixed,15,6) + #13#10;
+  end;
+
+  procedure plottingDots(popsize:integer; var pop:population);  {вывод на график каждого индивидуума }
+  var j:integer;
+  begin
+    Series2.Clear;
+    for j := 1 to popsize do with pop[j] do begin
+        if min=fitness then
+        begin
+          Series2.AddXY(xMinS,min,'',clBlue);
+        end
+        else
+        begin
+          Series2.AddXY(x[1],fitness);
+        end;
+    end;
+    Chart1.Update;
+    Sleep(700);
   end;
 
 begin
@@ -331,6 +353,8 @@ begin
     initpop;
     statistics (popsize, max, avg, min, sumfitness, oldpop);
     inputMemo(popsize,oldpop);      {вывод данных в Memo}
+    plottingDots(popsize,oldpop);   {вывод на график каждого индивидуума попул€ции}
+    Sleep(700);
     bestmin:= min;
     gen:= 0;                        {”становка счетчика поколений в 0}
     ProgressBar1.Max:= maxgen;
@@ -340,7 +364,8 @@ begin
         Memo1.Text:= Memo1.Text + #13#10 + '______________________________ѕоколение є ' + FloatToStr(gen) + #13#10;
         generation;
         statistics(popsize, max, avg, min, sumfitness, newpop);
-        inputMemo(popsize,newpop);  {вывод данных в Memo}
+        inputMemo(popsize,newpop);    {вывод данных в Memo}
+        plottingDots(popsize,newpop); {вывод на график каждого индивидуума попул€ции}
         if min < bestmin then begin
           bestmin := min;
           xbest:= xMinS;

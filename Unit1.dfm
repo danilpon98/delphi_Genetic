@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   Caption = 'Form1'
   ClientHeight = 531
-  ClientWidth = 808
+  ClientWidth = 810
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,7 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 8
+    Left = 344
     Top = 96
     Width = 113
     Height = 16
@@ -27,7 +27,7 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 8
+    Left = 344
     Top = 56
     Width = 61
     Height = 16
@@ -40,7 +40,7 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label3: TLabel
-    Left = 83
+    Left = 419
     Top = 56
     Width = 5
     Height = 16
@@ -53,7 +53,7 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label4: TLabel
-    Left = 136
+    Left = 472
     Top = 56
     Width = 5
     Height = 16
@@ -66,7 +66,7 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label5: TLabel
-    Left = 189
+    Left = 525
     Top = 56
     Width = 5
     Height = 16
@@ -79,7 +79,7 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label6: TLabel
-    Left = 8
+    Left = 344
     Top = 130
     Width = 106
     Height = 16
@@ -91,8 +91,24 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
-  object Button1: TButton
+  object Label7: TLabel
     Left = 8
+    Top = 8
+    Width = 290
+    Height = 32
+    Caption = 
+      #1055#1086#1080#1089#1082' '#1101#1082#1089#1090#1088#1077#1084#1091#1084#1086#1074' '#1092#1091#1085#1082#1094#1080#1080' '#1084#1085#1086#1075#1080#1093' '#1087#1077#1088#1077#1084#1077#1085#1085#1099#1093' '#1089' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1077#1084' '#1075#1077#1085 +
+      #1077#1090#1080#1095#1077#1089#1082#1080#1093' '#1072#1083#1075#1086#1088#1080#1090#1084#1086#1074
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
+  end
+  object Button1: TButton
+    Left = 344
     Top = 168
     Width = 161
     Height = 65
@@ -107,16 +123,16 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object Memo1: TMemo
-    Left = 472
-    Top = 0
-    Width = 336
-    Height = 531
-    Align = alRight
+    Left = -6
+    Top = 247
+    Width = 340
+    Height = 284
+    Align = alCustom
     ScrollBars = ssVertical
     TabOrder = 1
   end
   object ProgressBar1: TProgressBar
-    Left = 0
+    Left = 336
     Top = 0
     Width = 473
     Height = 33
@@ -124,7 +140,7 @@ object Form1: TForm1
     TabOrder = 2
   end
   object UpDown1: TUpDown
-    Left = 169
+    Left = 505
     Top = 95
     Width = 16
     Height = 21
@@ -133,7 +149,7 @@ object Form1: TForm1
     TabOrder = 3
   end
   object Edit1: TEdit
-    Left = 127
+    Left = 463
     Top = 95
     Width = 42
     Height = 21
@@ -141,7 +157,7 @@ object Form1: TForm1
     Text = '20'
   end
   object Edit2: TEdit
-    Left = 91
+    Left = 427
     Top = 55
     Width = 41
     Height = 21
@@ -149,7 +165,7 @@ object Form1: TForm1
     Text = '0'
   end
   object Edit3: TEdit
-    Left = 144
+    Left = 480
     Top = 55
     Width = 41
     Height = 21
@@ -157,7 +173,7 @@ object Form1: TForm1
     Text = '8'
   end
   object UpDown2: TUpDown
-    Left = 169
+    Left = 505
     Top = 129
     Width = 16
     Height = 21
@@ -168,7 +184,7 @@ object Form1: TForm1
     TabOrder = 7
   end
   object Edit4: TEdit
-    Left = 127
+    Left = 463
     Top = 129
     Width = 42
     Height = 21
@@ -176,7 +192,7 @@ object Form1: TForm1
     Text = '18'
   end
   object Chart1: TChart
-    Left = 0
+    Left = 336
     Top = 247
     Width = 473
     Height = 284
@@ -228,5 +244,19 @@ object Form1: TForm1
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+  end
+  object Panel1: TPanel
+    Left = 546
+    Top = 33
+    Width = 2
+    Height = 208
+    TabOrder = 10
+  end
+  object Panel2: TPanel
+    Left = 336
+    Top = 33
+    Width = 2
+    Height = 208
+    TabOrder = 11
   end
 end
