@@ -290,7 +290,7 @@ procedure TForm1.Button1Click(Sender: TObject);
       until j>popsize
   end;
 
-  procedure plotting;
+  procedure plotting; {построение графика функции}
   var i:fenotype;
     h:Real;
   begin
@@ -303,7 +303,7 @@ procedure TForm1.Button1Click(Sender: TObject);
     end;
   end;
 
-  procedure inputMemo(popsize:integer; var pop:population);
+  procedure inputMemo(popsize:integer; var pop:population);  {вывод данных в Memo}
   var j, j1:integer;
   begin
     for j := 1 to popsize do with pop[j] do begin
@@ -320,7 +320,7 @@ begin
     Memo1.Clear;
     xmax[1]:=StrToFloat(Edit3.Text);
     xmin[1]:=StrToFloat(Edit2.Text);
-    plotting; {построение графика}
+    plotting;                       {построение графика}
     popsize:=StrToInt(Edit1.Text);  {размер популяции}
     lchrom:=20;                     {число битов на один кодируемый параметр}
     maxgen:=StrToInt(Edit4.Text);   {максимальное число поколений}
@@ -330,7 +330,7 @@ begin
     nmutation := 0;    ncross := 0; {Инициализация счетчиков}
     initpop;
     statistics (popsize, max, avg, min, sumfitness, oldpop);
-    inputMemo(popsize,oldpop);
+    inputMemo(popsize,oldpop);      {вывод данных в Memo}
     bestmin:= min;
     gen:= 0;                        {Установка счетчика поколений в 0}
     ProgressBar1.Max:= maxgen;
@@ -340,7 +340,7 @@ begin
         Memo1.Text:= Memo1.Text + #13#10 + '______________________________Поколение № ' + FloatToStr(gen) + #13#10;
         generation;
         statistics(popsize, max, avg, min, sumfitness, newpop);
-        inputMemo(popsize,newpop);
+        inputMemo(popsize,newpop);  {вывод данных в Memo}
         if min < bestmin then begin
           bestmin := min;
           xbest:= xMinS;
