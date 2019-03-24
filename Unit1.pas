@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
   VclTee.TeeGDIPlus, VCLTee.TeEngine, Vcl.ExtCtrls, VCLTee.TeeProcs,
-  VCLTee.Chart, VCLTee.Series;
+  VCLTee.Chart, VCLTee.Series, Vcl.Imaging.pngimage;
 
 const
   maxpop = 100;   {максимальный размер популяции}
@@ -46,6 +46,10 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Label7: TLabel;
+    Image1: TImage;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -346,7 +350,7 @@ begin
     popsize:=StrToInt(Edit1.Text);  {размер популяции}
     lchrom:=20;                     {число битов на один кодируемый параметр}
     maxgen:=StrToInt(Edit4.Text);   {максимальное число поколений}
-    pmutation:=0.1;                 {вероятность мутации}
+    pmutation:=0.03;                 {вероятность мутации}
     pcross:=0.9;                    {вероятность скрещивания}
     randomize;                      {Инициализация генератора случайных чисел}
     nmutation := 0;    ncross := 0; {Инициализация счетчиков}
@@ -375,7 +379,7 @@ begin
 
     Memo1.Text:= Memo1.Text + #13#10 + 'Best min= ' + FloatToStrF(bestmin,ffFixed,15,6) + #13#10;
     Memo1.Text:= Memo1.Text + 'Best x= ' + FloatToStrF(xbest,ffFixed,15,6) + #13#10;
-
+    Label10.Caption:= '['+ FloatToStrF(xbest,ffFixed,15,2) + ';' + FloatToStrF(bestmin,ffFixed,15,2) + ']';
 end;
 
 end.
