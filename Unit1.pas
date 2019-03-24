@@ -4,7 +4,9 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
+  VclTee.TeeGDIPlus, VCLTee.TeEngine, Vcl.ExtCtrls, VCLTee.TeeProcs,
+  VCLTee.Chart, VCLTee.Series;
 
 const
   maxpop = 100;   {максимальный размер популяции}
@@ -38,6 +40,9 @@ type
     Label6: TLabel;
     UpDown2: TUpDown;
     Edit4: TEdit;
+    Chart1: TChart;
+    Series1: TLineSeries;
+    Series2: TPointSeries;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -292,11 +297,24 @@ procedure TForm1.Button1Click(Sender: TObject);
       until j>popsize
   end;
 
+  procedure plotting;
+  var i:fenotype;
+    h:Real;
+  begin
+    Series1.Clear;
+    h:= (xmax[1] - xmin[1])/50;
+    i[1]:=xmin[1];
+    while i[1]<=xmax[1] do begin
+       Series1.AddXY(i[1],objfunc(i));
+       i[1]:=i[1]+h;
+    end;
+  end;
 
 begin
     Memo1.Clear;
     xmax[1]:=StrToFloat(Edit3.Text);
     xmin[1]:=StrToFloat(Edit2.Text);
+    plotting; {построение графика}
     popsize:=StrToInt(Edit1.Text);  {размер популяции}
     lchrom:=20;                     {число битов на один кодируемый параметр}
     maxgen:=StrToInt(Edit4.Text);   {максимальное число поколений}

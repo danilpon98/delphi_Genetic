@@ -93,7 +93,7 @@ object Form1: TForm1
   end
   object Button1: TButton
     Left = 8
-    Top = 264
+    Top = 168
     Width = 161
     Height = 65
     Caption = #1042#1099#1087#1086#1083#1085#1080#1090#1100
@@ -174,5 +174,59 @@ object Form1: TForm1
     Height = 21
     TabOrder = 8
     Text = '18'
+  end
+  object Chart1: TChart
+    Left = 0
+    Top = 247
+    Width = 473
+    Height = 284
+    LeftWall.Pen.Width = 0
+    Legend.ResizeChart = False
+    Legend.TextSymbolGap = 0
+    Legend.Visible = False
+    Title.Font.Height = -13
+    Title.Text.Strings = (
+      #1043#1088#1072#1092#1080#1082' '#1092#1091#1085#1082#1094#1080#1080)
+    LeftAxis.Grid.Width = 0
+    LeftAxis.MinorGrid.Width = 0
+    RightAxis.Grid.Width = 0
+    View3D = False
+    Zoom.Pen.Width = 2
+    TabOrder = 9
+    DefaultCanvas = 'TGDIPlusCanvas'
+    PrintMargins = (
+      15
+      20
+      15
+      20)
+    ColorPaletteIndex = 13
+    object Series1: TLineSeries
+      Brush.BackColor = clDefault
+      LinePen.Color = 922746880
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+      Data = {
+        00130000000000000000C067400000000000E060400000000000E05F40000000
+        0000F069400000000000A0644000000000002052C00000000000405F40000000
+        0000B06D40000000000050744000000000009070400000000000607340000000
+        0000506E4000000000005074400000000000706C400000000000407040000000
+        0000E06F400000000000F074400000000000687A400000000000187F40}
+      Detail = {0000000000}
+    end
+    object Series2: TPointSeries
+      ClickableLine = False
+      Pointer.HorizSize = 3
+      Pointer.InflateMargins = True
+      Pointer.Style = psCircle
+      Pointer.VertSize = 3
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
   end
 end
