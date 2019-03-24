@@ -7,9 +7,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls;
 
 const
-    maxpop = 100;   {максимальный размер популяции}
-    maxstring = 20;
-    dim = 1;        {размерность пространства поиска}
+  maxpop = 100;   {максимальный размер популяции}
+  maxstring = 20;
+  dim = 1;        {размерность пространства поиска}
 
 type
   allele = boolean;                                  {позиция в битовой строке}
@@ -29,6 +29,15 @@ type
     Label1: TLabel;
     UpDown1: TUpDown;
     Edit1: TEdit;
+    Label2: TLabel;
+    Edit2: TEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    Edit3: TEdit;
+    Label5: TLabel;
+    Label6: TLabel;
+    UpDown2: TUpDown;
+    Edit4: TEdit;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -36,9 +45,9 @@ type
     { Public declarations }
   end;
 
-const
-  xmax:fenotype=(7); {массив максимальных значений для координат точки в пространстве поиска}
-  xmin:fenotype=(0); {массив минимальных значений для координат точки в пространстве поиска}
+//const
+  //xmax:fenotype=(7); {массив максимальных значений для координат точки в пространстве поиска}
+  //xmin:fenotype=(0); {массив минимальных значений для координат точки в пространстве поиска}
 
 var
   Form1: TForm1;
@@ -55,10 +64,16 @@ var
     sumfitness  {Накопление суммы значений функции пригодности для рассчета среднего}
   :real;        {глобальные вещественные переменные}
 
-  nmutation,    {счетчик мутаций}
-  ncross        {счетчик скрещиваний}
-   :integer;    {Статистические целые}
-  avg, max, min :real;{Статистические вещественные}
+    nmutation,    {счетчик мутаций}
+    ncross        {счетчик скрещиваний}
+  :integer;    {Статистические целые}
+
+  avg, max, min, bestmin, xbest, xMinS:real;{Статистические вещественные}
+
+    xmax,   {массив максимальных значений для координат точки в пространстве поиска}
+    xmin    {массив минимальных значений для координат точки в пространстве поиска}
+  :fenotype;
+
 
 implementation
 
@@ -121,24 +136,25 @@ procedure TForm1.Button1Click(Sender: TObject);
   {Расчет статистических величин: минимального, максимального и среднего значений целевой функции  }
   procedure statistics(popsize:integer; var max,avg,min,sumfitness:real; var pop:population); {Расчет статистик популяции }
   var j:integer;
-      xMinS:real;
   begin
       {Инициализация }
+
       sumfitness := pop[1].fitness;
       min := pop[1].fitness;
       max := pop[1].fitness;
+      xMinS:= pop[1].x[1];
       {Цикл для max, min, sumfitness }
       for j := 2 to popsize do with pop[j] do begin
           sumfitness := sumfitness + fitness;        {Накопление суммы значений функции пригодности}
           if fitness>max then max := fitness;        {Новое значение max}
           if fitness<min then begin
               min := fitness;
-              xMin := x[1];
+              xMinS := x[1];
           end;        {Новое значение min}
       end;
 
       Memo1.Text:= Memo1.Text + #13#10 + 'min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
-      Memo1.Text:= Memo1.Text + 'xMin= ' + FloatToStrF(xMin,ffFixed,15,6) + #13#10;
+      Memo1.Text:= Memo1.Text + 'xMin= ' + FloatToStrF(xMinS,ffFixed,15,6) + #13#10;
 
       avg := sumfitness/popsize; {Расчет среднего}
   end;
@@ -279,15 +295,18 @@ procedure TForm1.Button1Click(Sender: TObject);
 
 begin
     Memo1.Clear;
-    popsize:=6;                     {размер популяции}
+    xmax[1]:=StrToFloat(Edit3.Text);
+    xmin[1]:=StrToFloat(Edit2.Text);
+    popsize:=StrToInt(Edit1.Text);  {размер популяции}
     lchrom:=20;                     {число битов на один кодируемый параметр}
-    maxgen:=18;                     {максимальное число поколений}
+    maxgen:=StrToInt(Edit4.Text);   {максимальное число поколений}
     pmutation:=0.1;                 {вероятность мутации}
     pcross:=0.9;                    {вероятность скрещивания}
     randomize;                      {Инициализация генератора случайных чисел}
     nmutation := 0;    ncross := 0; {Инициализация счетчиков}
     initpop;
     statistics (popsize, max, avg, min, sumfitness, oldpop);
+    bestmin:= min;
     gen:= 0;                        {Установка счетчика поколений в 0}
     ProgressBar1.Max:= maxgen;
     repeat {Главный итерационный цикл}
@@ -296,10 +315,15 @@ begin
         Memo1.Text:= Memo1.Text + #13#10 + '______________________________Поколение № ' + FloatToStr(gen) + #13#10;
         generation;
         statistics(popsize, max, avg, min, sumfitness, newpop);
+        if min < bestmin then begin
+          bestmin := min;
+          xbest:= xMinS;
+        end;
         oldpop:= newpop;  {переход на новое поколение }
     until (gen >= maxgen);
 
-    Memo1.Text:= Memo1.Text + #13#10 + 'global min= ' + FloatToStrF(min,ffFixed,15,6) + #13#10;
+    Memo1.Text:= Memo1.Text + #13#10 + 'Best min= ' + FloatToStrF(bestmin,ffFixed,15,6) + #13#10;
+    Memo1.Text:= Memo1.Text + 'Best x= ' + FloatToStrF(xbest,ffFixed,15,6) + #13#10;
 
 end;
 
