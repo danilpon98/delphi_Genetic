@@ -105,7 +105,7 @@ procedure TForm1.Button1Click(Sender: TObject);
   end;
 
 
-  function rnd(low,high:integer):integer;   {Функция определение точки сечения в диапазоне между 1 и l-1 (Случайный выбор между low и high)}
+  function rnd(low,high:integer):integer;   {Функция определение точки сечения}
   var i:integer;
   begin
       if low >= high then
@@ -338,7 +338,6 @@ procedure TForm1.Button1Click(Sender: TObject);
           Series2.AddXY(x[1],fitness);
         end;
     end;
-    Chart1.Update;
     Sleep(700);
   end;
 
@@ -358,11 +357,13 @@ begin
     statistics (popsize, max, avg, min, sumfitness, oldpop);
     inputMemo(popsize,oldpop);      {вывод данных в Memo}
     plottingDots(popsize,oldpop);   {вывод на график каждого индивидуума популяции}
+    Chart1.Update;
     Sleep(700);
     bestmin:= min;
     gen:= 0;                        {Установка счетчика поколений в 0}
     ProgressBar1.Max:= maxgen;
     repeat {Главный итерационный цикл}
+        Application.ProcessMessages;
         gen:= gen + 1;
         ProgressBar1.Position := gen;
         Memo1.Text:= Memo1.Text + #13#10 + '______________________________Поколение № ' + FloatToStr(gen) + #13#10;
